@@ -1,3 +1,7 @@
+from collections import Counter
+
+# Part 1 of Day 1
+
 # Initialize the lists
 list1 = []
 list2 = []
@@ -25,6 +29,19 @@ distance = sum(abs(a - b) for a, b in zip(list1, list2))
 
 # Print results
 print("Distance:", distance)
+
+
+# Part 2 of Day 1
+
+
+# Count occurrences of each number in the right list
+list2_count = Counter(list2)
+
+# Calculate the similarity score
+similarityScore = sum(num * list2_count[num] for num in list1)
+
+# Print the result
+print('Similarity score:', similarityScore)
 
 
 
