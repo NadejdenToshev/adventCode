@@ -1,0 +1,59 @@
+# Part 1 of Day 2
+
+# Read reports from the input file
+reports = []
+with open("input.txt", "r") as file:
+    for line in file:
+        reports.append(list(map(int, line.split())))
+
+# Function to determine the number of safe reports
+def count_safe_reports(reports):
+    num_safe = 0  # Counter for safe reports
+    
+    for r in reports:
+        # Check if the report is either all increasing or all decreasing
+        is_increasing = all(1 <= y - x <= 3 for x, y in zip(r, r[1:]))
+        is_decreasing = all(1 <= x - y <= 3 for x, y in zip(r, r[1:]))
+        
+        # A report is safe if it is either entirely increasing or entirely decreasing
+        if is_increasing or is_decreasing:
+            num_safe += 1  # Increment the safe report counter
+
+    return num_safe
+
+# Count and print the number of safe reports
+num_safe_reports = count_safe_reports(reports)
+print("Number of safe reports:", num_safe_reports)
+
+
+
+
+# Part 2 of Day 2
+
+
+# Function to determine if a report is safe
+def is_safe(report):
+    is_increasing = all(1 <= y - x <= 3 for x, y in zip(report, report[1:]))
+    is_decreasing = all(1 <= x - y <= 3 for x, y in zip(report, report[1:]))
+    return is_increasing or is_decreasing
+
+# Function to count safe reports, allowing one level to be removed
+def count_safe_reports_with_removal(reports):
+    num_safe = 0  # Counter for safe reports
+
+    for r in reports:
+        if is_safe(r):  # Check if the report is already safe
+            num_safe += 1
+        else:
+            # Try removing each level and check if the modified report becomes safe
+            for i in range(len(r)):
+                modified_report = r[:i] + r[i+1:]  # Remove the i-th level
+                if is_safe(modified_report):
+                    num_safe += 1
+                    break  # No need to try removing other levels
+
+    return num_safe
+
+# Count and print the number of safe reports
+num_safe_reports = count_safe_reports_with_removal(reports)
+print("Number of safe reports:", num_safe_reports)
