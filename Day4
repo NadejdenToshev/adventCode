@@ -1,7 +1,7 @@
 # Part 1    
 
 # Read grid from input.txt
-with open('input.txt', 'r') as file:
+with open("Solutions/input.txt", "r") as file:
     grid = [list(line.strip()) for line in file]  # Read and format the grid as a list of character lists
 
 # Word search function
