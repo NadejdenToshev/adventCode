@@ -32,3 +32,45 @@ def word_search(grid):
 
 
 print("Total occurrences of XMAS:", word_search(grid))
+
+
+# Part 2
+
+# Read and format the grid as a list of character lists
+with open("Solutions/input.txt", "r") as file:
+    grid = [list(line.strip()) for line in file]
+
+# Determine the number of rows and columns in the grid
+rows = len(grid)
+cols = len(grid[0])
+
+# Initialize a list to store all possible directional offsets (excluding the center)
+dd = []
+for dx in range(-1, 2):
+    for dy in range(-1, 2):
+        if dx != 0 or dy != 0:
+            dd.append((dx, dy))
+
+# Define a function to check for the "XMAS" pattern at position (i, j)
+def has_xmas(i,j):
+    # Check if (i, j) is within the valid range, excluding boundaries
+    if not (1 <= i < rows - 1 and 1 <= j < cols - 1):
+        return False
+    # Check if the current position contains 'A'
+    if grid[i][j] != 'A':
+        return False
+    
+    # Construct two diagonals: 
+    # diag_1 string from top-left to bottom-right
+    # diag_2 string from top-right to bottom-left
+    diag_1 = f"{grid[i-1][j-1]}{grid[i+1][j+1]}"
+    diag_2 = f"{grid[i-1][j+1]}{grid[i+1][j-1]}"
+    
+    # Return True if both diagonals match the patterns "MS" or "SM"
+    return diag_1 in ["MS", "SM"] and diag_2 in ["MS", "SM"]
+
+result = 0
+for i in range(rows):
+    for j in range(cols):
+        result += has_xmas(i, j)
+print(result)
