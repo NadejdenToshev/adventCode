@@ -23,3 +23,26 @@ for update in updates:
     if is_satisfied:
         result += mid
 print(result)
+
+
+# Part 2
+
+def sorted_correct(update):
+    while True:
+        is_sorted = True
+        for i in range(len(update)-1):
+            if (update[i+1], update[i]) in rules:
+                is_sorted = False
+                update[i], update[i+1] = update[i+1], update[i]
+
+        if is_sorted:
+            return update
+        
+result = 0
+for update in updates:
+    if follows_rules(update)[0]:
+        continue
+
+    sequence = sorted_correct(update)
+    result += sequence[len(sequence) // 2]
+    print(result)
