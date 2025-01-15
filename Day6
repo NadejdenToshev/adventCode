@@ -40,3 +40,89 @@ while True:
         i, j = next_i, next_j
 
 print(len(seen))
+
+
+# Part 2
+
+with open("Solutions/input.txt") as file:
+    grid = [list(line) for line in file.read().strip().split("\n")]
+
+n = len(grid)
+m = len(grid[0])
+
+# Locate the guard's starting position (^)
+found = False
+for i in range(n):
+    for j in range(m):
+        if grid[i][j] == "^":
+            found = True
+            break
+    if found:
+        break
+
+# Guard's initial position
+ii, jj = i, j
+
+# Direction vectors: up, right, down, left
+dd = [[-1, 0], [0, 1], [1, 0], [0, -1]]
+
+# Simulate the initial patrol to identify reachable positions
+dir = 0
+og_seen = set()
+while True:
+    og_seen.add((i, j))
+
+    next_i = i + dd[dir][0]
+    next_j = j + dd[dir][1]
+
+    # If out of bounds, break the loop
+    if not (0 <= next_i < n and 0 <= next_j < m):
+        break
+
+    # Turn right if an obstacle is ahead
+    if grid[next_i][next_j] == "#":
+        dir = (dir + 1) % 4
+    else:
+        i, j = next_i, next_j
+
+# Function to determine if placing an obstacle at (oi, oj) creates a loop
+def will_loop(oi, oj):
+    if grid[oi][oj] == "#":  # If already an obstacle, skip
+        return False
+
+    grid[oi][oj] = "#"  # Temporarily place an obstacle
+    i, j = ii, jj  # Start from the guard's initial position
+    dir = 0
+    seen = set()
+
+    while True:
+        # Check if we revisit a position with the same direction
+        if (i, j, dir) in seen:
+            grid[oi][oj] = "."  # Restore the grid
+            return True
+        seen.add((i, j, dir))
+
+        # Determine the next position
+        next_i = i + dd[dir][0]
+        next_j = j + dd[dir][1]
+
+        # If out of bounds, no loop
+        if not (0 <= next_i < n and 0 <= next_j < m):
+            grid[oi][oj] = "."  # Restore the grid
+            return False
+
+        # Turn right if an obstacle is ahead, otherwise move forward
+        if grid[next_i][next_j] == "#":
+            dir = (dir + 1) % 4
+        else:
+            i, j = next_i, next_j
+
+# Calculate the number of positions that create a loop
+result = 0
+for oi, oj in og_seen:
+    if oi == ii and oj == jj:  # Skip the guard's starting position
+        continue
+    if will_loop(oi, oj):  # Check if placing an obstacle causes a loop
+        result += 1
+
+print(result)
