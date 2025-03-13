@@ -1,53 +1,53 @@
 # Part 1
 
 with open("Solutions/input.txt", "r") as file:
-    line = file.read().strip()
+    ns = list(map(int,file.read().strip()))
+    
 
-def make_filesystem(diskmap):
-    blocks = []
+# Part 1
+disk = []
+for i, n in enumerate(ns):
+    disk += [None if i % 2 else i // 2] * n
 
-    is_file = True
-    id = 0
-    for x in diskmap:
-        x = int(x)
-        if is_file:
-            blocks += [id] * x
-            id += 1
-            is_file = False
-        else:
-            blocks += [None] * x
-            is_file = True
+head = ns[0]
+while head < len(disk):
+    if disk[head]:
+        head += 1
+    elif num := disk.pop():
+        disk[head] = num
 
-    return blocks
+print(sum(i * n for i, n in enumerate(disk)))
 
-filesystem = make_filesystem(line)
 
-def move(arr):
-    first_free = 0
-    while arr[first_free] != None:
-        first_free += 1
 
-    i = len(arr) - 1
-    while arr[i] == None:
-        i -= 1
 
-    while i > first_free:
-        arr[first_free] = arr[i]
-        arr[i] = None
-        while arr[i] == None:
-            i -= 1
-        while arr[first_free] != None:
-            first_free += 1
+# Part 2
 
-    return arr
+blocks = []
+head = 0
+for i, n in enumerate(ns):
+    if not i % 2:
+        blocks.append((i // 2, head, head + n))
+    head += n
 
-def check_sum(arr):
-    result = 0
-    for i, x in enumerate(arr):
-        if x != None:
-            result += i * x
-    return result
+for to_move in range(i // 2, -1, -1):
+    block = next(b for b in blocks if b[0] == to_move)
+    _, start, end = block
+    space_needed = end - start
+    for i, ((_, _, end1), (_, start2, _)) in enumerate(zip(blocks, blocks[1:])):
+        if end1 == end:
+            break
+        if start2 - end1 >= space_needed:
+            blocks.insert(i + 1, (to_move, end1, end1 + space_needed))
+            blocks.remove(block)
+            break
 
-result = check_sum(move(filesystem))
-print(result)
+print(
+    sum(
+        block_id * index
+        for block_id, start, end in blocks
+        for index in range(start, end)
+    )
+)
+
 
